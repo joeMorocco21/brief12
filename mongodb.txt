@@ -1,0 +1,285 @@
+> use test
+switched to db test
+> db
+test
+> db.createUser({
+... user:"youssef",
+... pwd:"123456789",
+... roles:["readWrite", "dbAdmin"]
+... });
+Successfully added user: { "user" : "youssef", "roles" : [ "readWrite", "dbAdmin" ] }
+> db.createCollection('immo');
+{ "ok" : 1 }
+> db.immo.insert([{id:"1",surface:"200m2",ville:"CFD", prix:"250000"},{id:"2",surface:"300m2",ville:"CFD", prix:"350000"}]);
+BulkWriteResult({
+        "writeErrors" : [ ],
+        "writeConcernErrors" : [ ],
+        "nInserted" : 2,
+        "nUpserted" : 0,
+        "nMatched" : 0,
+        "nModified" : 0,
+        "nRemoved" : 0,
+        "upserted" : [ ]
+})
+> db.immo.find()
+{ "_id" : ObjectId("61aea76e55fd943762d7641b"), "id" : "1", "surface" : "200m2", "ville" : "CFD", "prix" : "250000" }
+{ "_id" : ObjectId("61aea76e55fd943762d7641c"), "id" : "2", "surface" : "300m2", "ville" : "CFD", "prix" : "350000" }
+> db.immo.insert([{id:"1",surface:"200m2",ville:"CFD", prix:"259000",parking:"True"}]);
+BulkWriteResult({
+        "writeErrors" : [ ],
+        "writeConcernErrors" : [ ],
+        "nInserted" : 1,
+        "nUpserted" : 0,
+        "nMatched" : 0,
+        "nModified" : 0,
+        "nRemoved" : 0,
+        "upserted" : [ ]
+})
+> db.immo.find()
+{ "_id" : ObjectId("61aea76e55fd943762d7641b"), "id" : "1", "surface" : "200m2", "ville" : "CFD", "prix" : "250000" }
+{ "_id" : ObjectId("61aea76e55fd943762d7641c"), "id" : "2", "surface" : "300m2", "ville" : "CFD", "prix" : "350000" }
+{ "_id" : ObjectId("61aea86f55fd943762d7641d"), "id" : "1", "surface" : "200m2", "ville" : "CFD", "prix" : "259000", "parking" : "True" }
+> db.immo.find().pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000"
+}
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+{
+        "_id" : ObjectId("61aea86f55fd943762d7641d"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "259000",
+        "parking" : "True"
+}
+> db.immo.update({id:"1"},{$set:{parking:"False"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.immo.find().pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000",
+        "parking" : "False"
+}
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+{
+        "_id" : ObjectId("61aea86f55fd943762d7641d"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "259000",
+        "parking" : "True"
+}
+> db.immo.update({prix:"259000"},{$set:{id:"3"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.immo.find().pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000",
+        "parking" : "False"
+}
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+{
+        "_id" : ObjectId("61aea86f55fd943762d7641d"),
+        "id" : "3",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "259000",
+        "parking" : "True"
+}
+> db.immo.update({id:"3"},{$unset:{parking:1}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.immo.find().pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000",
+        "parking" : "False"
+}
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+{
+        "_id" : ObjectId("61aea86f55fd943762d7641d"),
+        "id" : "3",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "259000"
+}
+> db.immo.update({id:"2"},{$rename:{"parking":"garage"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 0 })
+> db.immo.find().pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000",
+        "parking" : "False"
+}
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+{
+        "_id" : ObjectId("61aea86f55fd943762d7641d"),
+        "id" : "3",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "259000"
+}
+> db.immo.update({id:"1"},{$rename:{"parking":"garage"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.immo.find().pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000",
+        "garage" : "False"
+}
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+{
+        "_id" : ObjectId("61aea86f55fd943762d7641d"),
+        "id" : "3",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "259000"
+}
+> db.immo.remove({id:"3"});
+WriteResult({ "nRemoved" : 1 })
+> db.immo.find().pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000",
+        "garage" : "False"
+}
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+> db.immo.find({$or:[{prix:350000},{id:1}]}).pretty();
+> db.immo.find({$or:[{prix:"350000"},{id:"1"}]}).pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000",
+        "garage" : "False"
+}
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+> db.immo.find({$or:[{prix:"350000"}]}).pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+> db.immo.find({prix:{$lt:"340000"}}).pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000",
+        "garage" : "False"
+}
+> db.immo.find({prix:{$gt:"340000"}}).pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+> db.immo.find({prix:1}).pretty();
+> db.immo.find().sort({prix:1}).pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000",
+        "garage" : "False"
+}
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+> db.immo.find().sort({prix:-1}).pretty();
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641c"),
+        "id" : "2",
+        "surface" : "300m2",
+        "ville" : "CFD",
+        "prix" : "350000"
+}
+{
+        "_id" : ObjectId("61aea76e55fd943762d7641b"),
+        "id" : "1",
+        "surface" : "200m2",
+        "ville" : "CFD",
+        "prix" : "250000",
+        "garage" : "False"
+}
+>
